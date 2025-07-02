@@ -36,8 +36,3 @@ if uploaded_file is not None:
         file_name="imagen_sin_fondo_600x600.png",
         mime="image/png"
     )
-
-        data=buffer,
-        file_name="imagen_sin_fondo_600x600.png",
-        mime="image/png"
-    )
