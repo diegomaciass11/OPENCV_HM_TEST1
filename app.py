@@ -1,6 +1,4 @@
 import streamlit as st
-import cv2
-import numpy as np
 from PIL import Image
 from rembg import remove
 import io
@@ -15,7 +13,6 @@ Sube una imagen (JPG, JPEG o PNG). La aplicación quitará el fondo y redimensio
 uploaded_file = st.file_uploader("Sube tu imagen", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Mostrar imagen original
     image = Image.open(uploaded_file).convert("RGBA")
     st.image(image, caption="Imagen original", use_column_width=True)
 
@@ -23,23 +20,23 @@ if uploaded_file is not None:
         # Quitar fondo
         result_image = remove(image)
 
-        # Convertir a numpy y redimensionar
-        result_np = np.array(result_image)
-        resized = cv2.resize(result_np, (600, 600), interpolation=cv2.INTER_AREA)
+        # Redimensionar con Pillow
+        resized_image = result_image.resize((600, 600), Image.LANCZOS)
 
-        # Convertir de vuelta a PIL
-        final_image = Image.fromarray(resized)
+    st.image(resized_image, caption="Imagen sin fondo (600x600)", use_column_width=True)
 
-    # Mostrar imagen procesada
-    st.image(final_image, caption="Imagen sin fondo (600x600)", use_column_width=True)
-
-    # Preparar descarga
+    # Preparar para descarga
     buffer = io.BytesIO()
-    final_image.save(buffer, format="PNG")
+    resized_image.save(buffer, format="PNG")
     buffer.seek(0)
 
     st.download_button(
         label="📥 Descargar imagen procesada",
+        data=buffer,
+        file_name="imagen_sin_fondo_600x600.png",
+        mime="image/png"
+    )
+
         data=buffer,
         file_name="imagen_sin_fondo_600x600.png",
         mime="image/png"
